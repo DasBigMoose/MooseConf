@@ -10,6 +10,7 @@ Plug 'easymotion/vim-easymotion'
 Plug 'Raimondi/delimitMate'
 Plug 'wincent/ferret'
 Plug 'svermeulen/vim-subversive'
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 
 " Based tim pope
 Plug 'tpope/vim-surround'
@@ -22,14 +23,27 @@ Plug 'tpope/vim-repeat'
 
 " Completion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'phpactor/phpactor' ,  {'do': 'composer install', 'for': 'php'}
 
 " Display
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'tomasr/molokai'
+Plug 'tribela/vim-transparent'
+
+"Syntax
+Plug 'scrooloose/syntastic'
+Plug 'sheerun/vim-polyglot'
+
+"External Tools
+Plug 'ludovicchabant/vim-gutentags'
 
 call plug#end()
 
 set relativenumber
+
+" Set molokai colorscheme
+let g:rehash256 = 1
 colorscheme molokai
 
 " Mappings
@@ -43,6 +57,11 @@ map <Leader>re :e ~/.vimrc<cr>
 
 " Prevent c from going to a register
 nnoremap c "_c
+
+"Ctrl P
+let g:ctrlp_extensions = ['tag', 'buffertag',
+            \ 'undo', 'line', 'changes', 'mixed']
+let g:ctrlp_custom_ignore = '\v[/](public|node_modules|target|dist|vendor|bower_component|storage|migrations|build|bucket|silo|UserSettings|ProjectSettings|Packages|Logs|Library)|(.(swp|ico|git|svn|jpg|eps|png|gif|pdf|csproj|txt))$'
 
 
 " NERD Tree
