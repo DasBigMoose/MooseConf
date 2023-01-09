@@ -40,6 +40,18 @@ Plug 'ludovicchabant/vim-gutentags'
 
 call plug#end()
 
+filetype plugin indent on
+set nowrap
+set expandtab
+set number
+set tabstop=2
+set shiftwidth=2
+set visualbell
+set noerrorbells
+set cursorline
+set foldmethod=manual
+set exrc
+set number
 set relativenumber
 
 " Set molokai colorscheme
@@ -55,13 +67,28 @@ map <C-l>  <C-w>l
 map <Leader>rs :source ~/.vimrc<cr>
 map <Leader>re :e ~/.vimrc<cr>
 
+map <Tab> :TagbarToggle<cr>
+
 " Prevent c from going to a register
 nnoremap c "_c
+
+" C-c forces us to use the system clipboard
+map <C-c> "*
+
+"Tab commands
+map <leader>cto :tabonly<cr>
 
 "Ctrl P
 let g:ctrlp_extensions = ['tag', 'buffertag',
             \ 'undo', 'line', 'changes', 'mixed']
 let g:ctrlp_custom_ignore = '\v[/](public|node_modules|target|dist|vendor|bower_component|storage|migrations|build|bucket|silo|UserSettings|ProjectSettings|Packages|Logs|Library)|(.(swp|ico|git|svn|jpg|eps|png|gif|pdf|csproj|txt))$'
+
+" Easy Motion
+let g:EasyMotion_smartcase = 1
+map / <PLUG>(easymotion-sn)
+omap / <PLUG>(easymotion-tn)
+map  n <Plug>(easymotion-next)
+map  N <Plug>(easymotion-prev)
 
 
 " NERD Tree
@@ -71,6 +98,13 @@ nnoremap <C-t> :NERDTreeToggle<CR>
 nmap s <plug>(SubversiveSubstitute)
 nmap ss <plug>(SubversiveSubstituteLine)
 nmap S <plug>(SubversiveSubstituteToEndOfLine)
+
+"Ultisnips
+let g:UltiSnipsExpandTrigger="<c-e>"
+let g:UltiSnipsJumpForwardTrigger="<Leader>n"
+let g:UltiSnipsJumpBackwardTrigger="<Leader>p"
+
+let g:UltiSnipsEditSplit="vertical"
 
 " COC Shit
 " May need for vim (not neovim) since coc.nvim calculate byte offset by count
