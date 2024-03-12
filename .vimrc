@@ -38,6 +38,9 @@ Plug 'sheerun/vim-polyglot'
 "External Tools
 Plug 'ludovicchabant/vim-gutentags'
 
+" Misc 
+Plug 'christoomey/vim-system-copy'
+
 call plug#end()
 
 filetype plugin indent on
