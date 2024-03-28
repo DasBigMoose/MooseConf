@@ -7,14 +7,15 @@ local config = wezterm.config_builder()
 -- config.color_scheme = 'Greenscreen (dark) (terminal.sexy)'
 config.color_scheme = 'Homebrew'
 -- config.color_scheme = 'HaX0R_GR33N'
-config.enable_tab_bar = false
-config.window_background_opacity = .5
+config.enable_tab_bar = true
+config.window_background_opacity = .75
 config.text_background_opacity = 0.3
+config.hide_mouse_cursor_when_typing = false
 
 
 --Font configuration
 config.font = wezterm.font 'Source Code Pro'
-config.font_size = 20.0
+config.font_size = 12.0
 
 
 --Key configuration
@@ -28,6 +29,26 @@ config.keys = {
     key = '_',
     mods = 'CTRL|SHIFT',
     action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' }
+  },
+  {
+    key = 'h',
+    mods = 'CTRL|SHIFT',
+    action = wezterm.action.ActivatePaneDirection "Left"
+  },
+  {
+    key = 'l',
+    mods = 'CTRL|SHIFT',
+    action = wezterm.action.ActivatePaneDirection "Right"
+  },
+  {
+    key = 'k',
+    mods = 'CTRL|SHIFT',
+    action = wezterm.action.ActivatePaneDirection "Up"
+  },
+  {
+    key = 'j',
+    mods = 'CTRL|SHIFT',
+    action = wezterm.action.ActivatePaneDirection "Down"
   },
 }
 
