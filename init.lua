@@ -5,7 +5,6 @@ vim.call('plug#begin')
 Plug 'preservim/nerdtree'
 Plug 'mg979/vim-visual-multi'
 Plug 'preservim/tagbar'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'Raimondi/delimitMate'
 Plug 'wincent/ferret'
@@ -34,23 +33,25 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tomasr/molokai'
 Plug 'tribela/vim-transparent'
 
-Plug 'habamax/vim-godot'
-
-Plug 'scrooloose/syntastic'
-Plug 'sheerun/vim-polyglot'
-
 Plug 'christoomey/vim-system-copy'
+Plug 'nvim-lua/plenary.nvim'
+Plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
+Plug('nvim-telescope/telescope.nvim', {['tag'] = '0.1.6' })
+Plug('nvim-telescope/telescope-fzf-native.nvim', { ['do'] = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' })
+Plug 'BurntSushi/ripgrep'
+
 vim.call('plug#end')
 
 require("mason").setup()
 require("mason-lspconfig").setup()
+local builtin = require('telescope.builtin')
 
 --filetype plugin indent on
 vim.opt.wrap = false
 vim.opt.expandtab = true
 vim.opt.number = true
-vim.opt.tabstop = 2
-vim.opt.shiftwidth = 2
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
 vim.opt.visualbell = true
 vim.opt.errorbells = false
 vim.opt.cursorline = true
@@ -58,6 +59,8 @@ vim.opt.foldmethod = "manual"
 vim.opt.exrc = true
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.smartcase = true
+vim.opt.ignorecase = true
 
 vim.g.rehash256 = 1
 vim.cmd("colorscheme molokai")
@@ -67,17 +70,21 @@ vim.keymap.set('n', '<C-j>', '<C-w>j')
 vim.keymap.set('n', '<C-k>', '<C-w>k')
 vim.keymap.set('n', '<C-l>', '<C-w>l')
 
-vim.keymap.set('n', '<Leader>rs', ':source ~/.config/nvim/init.vim<cr>')
-vim.keymap.set('n', '<Leader>re', ':e ~/.config/nvim/init.vim<cr>')
+vim.keymap.set('n', '<Leader>rs', ':source ~/.config/nvim/init.lua<cr>')
+vim.keymap.set('n', '<Leader>re', ':e ~/.config/nvim/init.lua<cr>')
 
-vim.keymap.set('n', '<Tab>', ':TagbarToggle<cr>')
+--vim.keymap.set('n', '<Tab>', ':TagbarToggle<cr>')
 
-vim.keymap.set('n', '<C-c>', '"*')
+vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+vim.keymap.set('n', '<leader>fr', builtin.lsp_references, {})
+vim.keymap.set('n', '<Tab>', builtin.lsp_document_symbols, {})
+
+vim.keymap.set('n', '<C-c>', '"+')
 
 vim.keymap.set('n', '<leader>cto', ':tabonly<cr>')
-
-vim.g.ctrlp_extensions = {'tag', 'buffertag', 'undo', 'line', 'changes', 'mixed'}
-vim.g.ctrlp_custom_ignore = '\v[/](public|node_modules|target|dist|vendor|bower_component|storage|migrations|build|bucket|silo|UserSettings|ProjectSettings|Packages|Logs|Library)|(.(swp|ico|git|svn|jpg|eps|png|gif|pdf|csproj|txt|tscn|tres|import|blend|blend1))$'
 
 vim.g.EasyMotion_smartcase = 1
 vim.keymap.set('n', '<PLUG>(easymotion-sn)', '')
@@ -99,7 +106,7 @@ vim.g.UltiSnipsJumpBackwardTrigger="<Leader>p"
 vim.g.UltiSnipsEditSplit="vertical"
 
 
--- Set up nvim-cmp.
+ -- Set up nvim-cmp.
 local cmp = require'cmp'
 
 cmp.setup({
@@ -119,6 +126,13 @@ cmp.setup({
         ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-e>'] = cmp.mapping.abort(),
         ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        ['<Tab>'] = function(fallback)
+          if cmp.visible() then
+            cmp.select_next_item()
+          else
+            fallback()
+          end
+        end
       }),
     sources = cmp.config.sources({
         { name = 'nvim_lsp' },
@@ -127,17 +141,6 @@ cmp.setup({
         { name = 'buffer' },
       })
   })
-
--- To use git you need to install the plugin petertriho/cmp-git and uncomment lines below
--- Set configuration for specific filetype.
---[[ cmp.setup.filetype('gitcommit', {
-sources = cmp.config.sources({
-{ name = 'git' },
-}, {
-{ name = 'buffer' },
-})
-})
-require("cmp_git").setup() ]]-- 
 
 -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline({ '/', '?' }, {
@@ -161,6 +164,83 @@ cmp.setup.cmdline(':', {
 -- Set up lspconfig.
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-require('lspconfig')['gdscript'].setup {
+require('lspconfig')['intelephense'].setup {
   capabilities = capabilities
 }
+
+require('lspconfig')['vuels'].setup {
+  capabilities = capabilities
+}
+
+require('lspconfig')['lua_ls'].setup {
+  capabilities = capabilities
+}
+
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "php", "javascript", "typescript" },
+  sync_install = false,
+  auto_install = true,
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = true,
+  },
+}
+
+require('telescope').setup{
+  defaults = {
+    -- Default configuration for telescope goes here:
+    -- config_key = value,
+    file_ignore_patterns =  {
+        "^bucket",
+        "^legacy",
+        "^node_modules",
+        "^notes",
+        "^printcenter",
+        "^silo",
+        "^tools",
+        "^vagrant",
+        "^website",
+        "%.svg",
+        "core/vendor",
+        "core/third_party",
+        "core/public",
+        "core/node_modules",
+        "intranet/vendor",
+        "intranet/public",
+        "intranet/storage",
+        "intranet/node_modules",
+    },
+    mappings = {
+      i = {
+        -- map actions.which_key to <C-h> (default: <C-/>)
+        -- actions.which_key shows the mappings for your picker,
+        -- e.g. git_{create, delete, ...}_branch for the git_branches picker
+        ["<C-h>"] = "which_key",
+        ["<C-j>"] = "move_selection_next",
+        ["<C-k>"] = "move_selection_previous",
+        ["<C-f>"] = "results_scrolling_down",
+        ["<C-b>"] = "results_scrolling_up",
+      }
+    }
+  },
+  pickers = {
+    -- Default configuration for builtin pickers goes here:
+    -- picker_name = {
+    --   picker_config_key = value,
+    --   ...
+    -- }
+    -- Now the picker_config_key will be applied every time you call this
+    -- builtin picker
+  },
+  extensions = {
+    fzf = {
+      fuzzy = true,                    -- false will only do exact matching
+      override_generic_sorter = true,  -- override the generic sorter
+      override_file_sorter = true,     -- override the file sorter
+      case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+      -- the default case_mode is "smart_case"
+    }
+  }
+}
+
+require('telescope').load_extension('fzf')
