@@ -13,6 +13,8 @@ Plug 'SirVer/ultisnips'
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
+Plug 'mfussenegger/nvim-lint'
+Plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
 
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
@@ -32,6 +34,8 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tomasr/molokai'
 Plug 'tribela/vim-transparent'
+
+Plug 'habamax/vim-godot'
 
 Plug 'christoomey/vim-system-copy'
 Plug 'nvim-lua/plenary.nvim'
@@ -105,6 +109,42 @@ vim.g.UltiSnipsJumpBackwardTrigger="<Leader>p"
 
 vim.g.UltiSnipsEditSplit="vertical"
 
+-- require('lint').linters_by_ft = {
+--   gdscript = {'gdtoolkit',}
+-- }
+
+-- vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+--   callback = function()
+
+--     -- try_lint without arguments runs the linters defined in `linters_by_ft`
+--     -- for the current filetype
+--     require("lint").try_lint()
+--   end,
+-- })
+
+require'nvim-treesitter.configs'.setup {
+  -- A list of parser names, or "all" (the five listed parsers should always be installed)
+  ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "gdscript" },
+
+  -- Install parsers synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+
+  -- Automatically install missing parsers when entering buffer
+  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+  auto_install = true,
+
+  -- List of parsers to ignore installing (or "all")
+  ignore_install = { "javascript" },
+  highlight = {
+    enable = true,
+
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = true,
+  },
+}
 
  -- Set up nvim-cmp.
 local cmp = require'cmp'
@@ -165,6 +205,8 @@ cmp.setup.cmdline(':', {
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
 require('lspconfig')['intelephense'].setup {
+
+require('lspconfig')['gdscript'].setup {
   capabilities = capabilities
 }
 
