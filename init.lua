@@ -1,53 +1,57 @@
-local vim = vim
-local Plug = vim.fn['plug#']
+-- local vim = vim
+-- local Plug = vim.fn['plug#']
 
-vim.call('plug#begin')
-Plug 'preservim/nerdtree'
-Plug 'mg979/vim-visual-multi'
-Plug 'preservim/tagbar'
-Plug 'easymotion/vim-easymotion'
-Plug 'Raimondi/delimitMate'
-Plug 'wincent/ferret'
-Plug 'svermeulen/vim-subversive'
-Plug 'SirVer/ultisnips'
-Plug 'williamboman/mason.nvim'
-Plug 'williamboman/mason-lspconfig.nvim'
-Plug 'neovim/nvim-lspconfig'
-Plug 'mfussenegger/nvim-lint'
-Plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
+-- vim.call('plug#begin')
+-- Plug 'preservim/nerdtree'
+-- Plug 'mg979/vim-visual-multi'
+-- Plug 'preservim/tagbar'
+-- Plug 'easymotion/vim-easymotion'
+-- Plug 'Raimondi/delimitMate'
+-- Plug 'wincent/ferret'
+-- Plug 'svermeulen/vim-subversive'
+-- Plug 'SirVer/ultisnips'
+-- Plug 'williamboman/mason.nvim'
+-- Plug 'williamboman/mason-lspconfig.nvim'
+-- Plug 'neovim/nvim-lspconfig'
+-- Plug 'mfussenegger/nvim-lint'
+-- Plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
+--
+-- Plug 'tpope/vim-surround'
+-- Plug 'tpope/vim-fugitive'
+-- Plug 'tpope/vim-sensible'
+-- Plug 'tpope/vim-commentary'
+-- Plug 'tpope/vim-endwise'
+-- Plug 'tpope/vim-unimpaired'
+-- Plug 'tpope/vim-repeat'
+--
+-- Plug 'hrsh7th/cmp-nvim-lsp'
+-- Plug 'hrsh7th/cmp-buffer'
+-- Plug 'hrsh7th/cmp-path'
+-- Plug 'hrsh7th/cmp-cmdline'
+-- Plug 'hrsh7th/nvim-cmp'
+--
+-- Plug 'vim-airline/vim-airline'
+-- Plug 'vim-airline/vim-airline-themes'
+-- Plug 'tomasr/molokai'
+-- Plug 'tribela/vim-transparent'
+--
+-- Plug 'habamax/vim-godot'
+-- Plug 'folke/trouble.nvim'
+--
+-- Plug 'christoomey/vim-system-copy'
+-- Plug 'nvim-lua/plenary.nvim'
+-- Plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
+-- Plug('nvim-telescope/telescope.nvim', {['tag'] = '0.1.6' })
+-- Plug('nvim-telescope/telescope-fzf-native.nvim', { ['do'] = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' })
+-- Plug 'BurntSushi/ripgrep'
 
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-repeat'
+-- vim.call('plug#end')
 
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/nvim-cmp'
-
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'tomasr/molokai'
-Plug 'tribela/vim-transparent'
-
-Plug 'habamax/vim-godot'
-
-Plug 'christoomey/vim-system-copy'
-Plug 'nvim-lua/plenary.nvim'
-Plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
-Plug('nvim-telescope/telescope.nvim', {['tag'] = '0.1.6' })
-Plug('nvim-telescope/telescope-fzf-native.nvim', { ['do'] = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' })
-Plug 'BurntSushi/ripgrep'
-
-vim.call('plug#end')
-
+require("config.lazy")
+require("lazy").setup("plugins")
 require("mason").setup()
 require("mason-lspconfig").setup()
+
 local builtin = require('telescope.builtin')
 
 --filetype plugin indent on
@@ -113,14 +117,11 @@ vim.g.UltiSnipsEditSplit="vertical"
 --   gdscript = {'gdtoolkit',}
 -- }
 
--- vim.api.nvim_create_autocmd({ "BufWritePost" }, {
---   callback = function()
+vim.api.nvim_create_autocmd({"BufNewFile", "BufRead"}, {
+	pattern = {"*.vert", "*.frag"},
+	callback = function() vim.cmd("set filetype=glsl") end
+})
 
---     -- try_lint without arguments runs the linters defined in `linters_by_ft`
---     -- for the current filetype
---     require("lint").try_lint()
---   end,
--- })
 
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all" (the five listed parsers should always be installed)
@@ -205,6 +206,22 @@ cmp.setup.cmdline(':', {
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
 require('lspconfig')['intelephense'].setup {
+  capabilities = capabilities
+}
+
+require('lspconfig')['glsl_analyzer'].setup {
+  capabilities = capabilities
+}
+require('lspconfig')['cmake'].setup {
+  capabilities = capabilities
+}
+require('lspconfig')['clangd'].setup {
+  capabilities = capabilities
+}
+
+require('lspconfig')['gopls'].setup {
+  capabilities = capabilities
+}
 
 require('lspconfig')['gdscript'].setup {
   capabilities = capabilities
@@ -284,5 +301,12 @@ require('telescope').setup{
     }
   }
 }
+
+-- Set up trouble
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  callback = function()
+    vim.cmd([[Trouble qflist open]])
+  end,
+})
 
 require('telescope').load_extension('fzf')
