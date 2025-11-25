@@ -6,7 +6,6 @@ return {
 	'Raimondi/delimitMate',
 	'wincent/ferret',
 	'svermeulen/vim-subversive',
-	'SirVer/ultisnips',
 	'williamboman/mason.nvim',
 	'williamboman/mason-lspconfig.nvim',
 	'neovim/nvim-lspconfig',

@@ -1,52 +1,3 @@
--- local vim = vim
--- local Plug = vim.fn['plug#']
-
--- vim.call('plug#begin')
--- Plug 'preservim/nerdtree'
--- Plug 'mg979/vim-visual-multi'
--- Plug 'preservim/tagbar'
--- Plug 'easymotion/vim-easymotion'
--- Plug 'Raimondi/delimitMate'
--- Plug 'wincent/ferret'
--- Plug 'svermeulen/vim-subversive'
--- Plug 'SirVer/ultisnips'
--- Plug 'williamboman/mason.nvim'
--- Plug 'williamboman/mason-lspconfig.nvim'
--- Plug 'neovim/nvim-lspconfig'
--- Plug 'mfussenegger/nvim-lint'
--- Plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
---
--- Plug 'tpope/vim-surround'
--- Plug 'tpope/vim-fugitive'
--- Plug 'tpope/vim-sensible'
--- Plug 'tpope/vim-commentary'
--- Plug 'tpope/vim-endwise'
--- Plug 'tpope/vim-unimpaired'
--- Plug 'tpope/vim-repeat'
---
--- Plug 'hrsh7th/cmp-nvim-lsp'
--- Plug 'hrsh7th/cmp-buffer'
--- Plug 'hrsh7th/cmp-path'
--- Plug 'hrsh7th/cmp-cmdline'
--- Plug 'hrsh7th/nvim-cmp'
---
--- Plug 'vim-airline/vim-airline'
--- Plug 'vim-airline/vim-airline-themes'
--- Plug 'tomasr/molokai'
--- Plug 'tribela/vim-transparent'
---
--- Plug 'habamax/vim-godot'
--- Plug 'folke/trouble.nvim'
---
--- Plug 'christoomey/vim-system-copy'
--- Plug 'nvim-lua/plenary.nvim'
--- Plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
--- Plug('nvim-telescope/telescope.nvim', {['tag'] = '0.1.6' })
--- Plug('nvim-telescope/telescope-fzf-native.nvim', { ['do'] = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' })
--- Plug 'BurntSushi/ripgrep'
-
--- vim.call('plug#end')
-
 require("config.lazy")
 require("lazy").setup("plugins")
 require("mason").setup()
@@ -69,6 +20,8 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.smartcase = true
 vim.opt.ignorecase = true
+vim.diagnostic.config({ virtual_text = true })
+
 
 vim.g.rehash256 = 1
 vim.cmd("colorscheme molokai")
@@ -78,16 +31,24 @@ vim.keymap.set('n', '<C-j>', '<C-w>j')
 vim.keymap.set('n', '<C-k>', '<C-w>k')
 vim.keymap.set('n', '<C-l>', '<C-w>l')
 
+--Music Control
+vim.keymap.set('n', '<C-.>', ':!mpc next<cr><cr>')
+vim.keymap.set('n', '<C-,>', ':!mpc prev<cr><cr>')
+vim.keymap.set('n', '<C-p>', ':!mpc toggle<cr><cr>')
+vim.keymap.set('n', '<leader>mm', ':split|terminal ncmpcpp<cr>i')
+
 vim.keymap.set('n', '<Leader>rs', ':source ~/.config/nvim/init.lua<cr>')
 vim.keymap.set('n', '<Leader>re', ':e ~/.config/nvim/init.lua<cr>')
 
 --vim.keymap.set('n', '<Tab>', ':TagbarToggle<cr>')
 
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+--vim.keymap.set('n', '<leader>fg', builtin.live_grep, {cwd = "src"})
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 vim.keymap.set('n', '<leader>fr', builtin.lsp_references, {})
+vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, {})
 vim.keymap.set('n', '<Tab>', builtin.lsp_document_symbols, {})
 
 vim.keymap.set('n', '<C-c>', '"+')
@@ -107,11 +68,11 @@ vim.keymap.set('n', '<plug>(SubversiveSubstitute)', '')
 vim.keymap.set('n', '<plug>(SubversiveSubstituteLine)', '')
 vim.keymap.set('n', '<plug>(SubversiveSubstituteToEndOfLine)', '')
 
-vim.g.UltiSnipsExpandTrigger="<c-e>"
-vim.g.UltiSnipsJumpForwardTrigger="<Leader>n"
-vim.g.UltiSnipsJumpBackwardTrigger="<Leader>p"
+-- vim.g.UltiSnipsExpandTrigger="<c-e>"
+-- vim.g.UltiSnipsJumpForwardTrigger="<Leader>n"
+-- vim.g.UltiSnipsJumpBackwardTrigger="<Leader>p"
 
-vim.g.UltiSnipsEditSplit="vertical"
+-- vim.g.UltiSnipsEditSplit="vertical"
 
 -- require('lint').linters_by_ft = {
 --   gdscript = {'gdtoolkit',}
@@ -154,7 +115,7 @@ cmp.setup({
     snippet = {
       -- REQUIRED - you must specify a snippet engine
       expand = function(args)
-        vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
       end,
     },
     window = {
@@ -177,7 +138,7 @@ cmp.setup({
       }),
     sources = cmp.config.sources({
         { name = 'nvim_lsp' },
-        { name = 'ultisnips' }, -- For ultisnips users.
+        -- { name = 'ultisnips' }, -- For ultisnips users.
       }, {
         { name = 'buffer' },
       })
@@ -260,14 +221,6 @@ require('telescope').setup{
         "^vagrant",
         "^website",
         "%.svg",
-        "core/vendor",
-        "core/third_party",
-        "core/public",
-        "core/node_modules",
-        "intranet/vendor",
-        "intranet/public",
-        "intranet/storage",
-        "intranet/node_modules",
     },
     mappings = {
       i = {
