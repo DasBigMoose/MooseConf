@@ -30,6 +30,7 @@ return {
 	'vim-airline/vim-airline-themes',
 	'tomasr/molokai',
 	'tribela/vim-transparent',
+	    "zk-org/zk-nvim",
 
 	'habamax/vim-godot',
     {

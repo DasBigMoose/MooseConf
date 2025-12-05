@@ -1,56 +1,28 @@
--- local vim = vim
--- local Plug = vim.fn['plug#']
-
--- vim.call('plug#begin')
--- Plug 'preservim/nerdtree'
--- Plug 'mg979/vim-visual-multi'
--- Plug 'preservim/tagbar'
--- Plug 'easymotion/vim-easymotion'
--- Plug 'Raimondi/delimitMate'
--- Plug 'wincent/ferret'
--- Plug 'svermeulen/vim-subversive'
--- Plug 'SirVer/ultisnips'
--- Plug 'williamboman/mason.nvim'
--- Plug 'williamboman/mason-lspconfig.nvim'
--- Plug 'neovim/nvim-lspconfig'
--- Plug 'mfussenegger/nvim-lint'
--- Plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
---
--- Plug 'tpope/vim-surround'
--- Plug 'tpope/vim-fugitive'
--- Plug 'tpope/vim-sensible'
--- Plug 'tpope/vim-commentary'
--- Plug 'tpope/vim-endwise'
--- Plug 'tpope/vim-unimpaired'
--- Plug 'tpope/vim-repeat'
---
--- Plug 'hrsh7th/cmp-nvim-lsp'
--- Plug 'hrsh7th/cmp-buffer'
--- Plug 'hrsh7th/cmp-path'
--- Plug 'hrsh7th/cmp-cmdline'
--- Plug 'hrsh7th/nvim-cmp'
---
--- Plug 'vim-airline/vim-airline'
--- Plug 'vim-airline/vim-airline-themes'
--- Plug 'tomasr/molokai'
--- Plug 'tribela/vim-transparent'
---
--- Plug 'habamax/vim-godot'
--- Plug 'folke/trouble.nvim'
---
--- Plug 'christoomey/vim-system-copy'
--- Plug 'nvim-lua/plenary.nvim'
--- Plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
--- Plug('nvim-telescope/telescope.nvim', {['tag'] = '0.1.6' })
--- Plug('nvim-telescope/telescope-fzf-native.nvim', { ['do'] = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' })
--- Plug 'BurntSushi/ripgrep'
-
--- vim.call('plug#end')
-
 require("config.lazy")
 require("lazy").setup("plugins")
 require("mason").setup()
 require("mason-lspconfig").setup()
+require("zk").setup({
+      -- Can be "telescope", "fzf", "fzf_lua", "minipick", "snacks_picker",
+      -- or select" (`vim.ui.select`).
+      picker = "select",
+
+      lsp = {
+        -- `config` is passed to `vim.lsp.start(config)`
+        config = {
+          name = "zk",
+          cmd = { "zk", "lsp" },
+          filetypes = { "markdown" },
+          -- on_attach = ...
+          -- etc, see `:h vim.lsp.start()`
+        },
+
+        -- automatically attach buffers in a zk notebook that match the given filetypes
+        auto_attach = {
+          enabled = true,
+        },
+      },
+    })
 
 local builtin = require('telescope.builtin')
 
@@ -116,6 +88,25 @@ vim.g.UltiSnipsEditSplit="vertical"
 -- require('lint').linters_by_ft = {
 --   gdscript = {'gdtoolkit',}
 -- }
+--
+
+-- ZK
+local opts = { noremap=true, silent=false }
+
+-- Create a new note after asking for its title.
+vim.api.nvim_set_keymap("n", "<leader>zn", "<Cmd>ZkNew { title = vim.fn.input('Title: ') }<CR>", opts)
+
+-- Open notes.
+vim.api.nvim_set_keymap("n", "<leader>zo", "<Cmd>ZkNotes { sort = { 'modified' } }<CR>", opts)
+-- Open notes associated with the selected tags.
+vim.api.nvim_set_keymap("n", "<leader>zt", "<Cmd>ZkTags<CR>", opts)
+
+vim.api.nvim_set_keymap("n", "<leader>zi", "<Cmd>ZkInsertLink<CR>", opts)
+
+-- Search for the notes matching a given query.
+vim.api.nvim_set_keymap("n", "<leader>zf", "<Cmd>ZkNotes { sort = { 'modified' }, match = { vim.fn.input('Search: ') } }<CR>", opts)
+-- Search for the notes matching the current visual selection.
+vim.api.nvim_set_keymap("v", "<leader>zf", ":'<,'>ZkMatch<CR>", opts)
 
 vim.api.nvim_create_autocmd({"BufNewFile", "BufRead"}, {
 	pattern = {"*.vert", "*.frag"},
