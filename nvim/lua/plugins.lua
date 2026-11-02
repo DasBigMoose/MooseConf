@@ -10,7 +10,6 @@ return {
 	'williamboman/mason-lspconfig.nvim',
 	'neovim/nvim-lspconfig',
 	'mfussenegger/nvim-lint',
-
 	'tpope/vim-surround',
 	'tpope/vim-fugitive',
 	'tpope/vim-sensible',

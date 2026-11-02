@@ -15,7 +15,7 @@ config.hide_mouse_cursor_when_typing = false
 
 --Font configuration
 config.font = wezterm.font 'Source Code Pro'
-config.font_size = 14.0
+config.font_size = 16.0
 
 
 --Key configuration

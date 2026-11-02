@@ -124,10 +124,7 @@ vim.api.nvim_create_autocmd({"BufNewFile", "BufRead"}, {
 })
 
 
-require'nvim-treesitter.configs'.setup {
-  -- A list of parser names, or "all" (the five listed parsers should always be installed)
-  ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "gdscript" },
-
+require('nvim-treesitter').setup {
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,
 
@@ -147,6 +144,7 @@ require'nvim-treesitter.configs'.setup {
     additional_vim_regex_highlighting = true,
   },
 }
+require('nvim-treesitter').install({ "c", "lua", "vim", "vimdoc", "query", "gdscript", "typescript", "html", "javascript", "java"})
 
  -- Set up nvim-cmp.
 local cmp = require'cmp'
@@ -205,46 +203,20 @@ cmp.setup.cmdline(':', {
 
 -- Set up lspconfig.
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
--- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-require('lspconfig')['intelephense'].setup {
-  capabilities = capabilities
-}
 
-require('lspconfig')['glsl_analyzer'].setup {
-  capabilities = capabilities
-}
-require('lspconfig')['cmake'].setup {
-  capabilities = capabilities
-}
-require('lspconfig')['clangd'].setup {
-  capabilities = capabilities
-}
+vim.lsp.enable({'biome',
+'typescript-language-server',
+'intelephense',
+'cmake',
+'clangd',
+'gopls',
+'gdscript',
+'vuels',
+'lua_ls',
+'prettier',
+'python-lsp-server'
+})
 
-require('lspconfig')['gopls'].setup {
-  capabilities = capabilities
-}
-
-require('lspconfig')['gdscript'].setup {
-  capabilities = capabilities
-}
-
-require('lspconfig')['vuels'].setup {
-  capabilities = capabilities
-}
-
-require('lspconfig')['lua_ls'].setup {
-  capabilities = capabilities
-}
-
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "php", "javascript", "typescript" },
-  sync_install = false,
-  auto_install = true,
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = true,
-  },
-}
 
 require('telescope').setup{
   defaults = {
