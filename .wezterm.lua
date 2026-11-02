@@ -3,10 +3,7 @@ local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
 --Window display configuration
--- config.color_scheme = 'Trim Yer Beard (terminal.sexy)'
--- config.color_scheme = 'Greenscreen (dark) (terminal.sexy)'
 config.color_scheme = 'Homebrew'
--- config.color_scheme = 'HaX0R_GR33N'
 config.enable_tab_bar = true
 config.window_background_opacity = .75
 config.text_background_opacity = 0.3
